@@ -2,6 +2,7 @@ import { defineConfig } from 'vite';
 import { VitePWA } from 'vite-plugin-pwa';
 
 export default defineConfig({
+  base: '/SkiCrazed/',
   plugins: [
     VitePWA({
       registerType: 'autoUpdate',
@@ -10,7 +11,7 @@ export default defineConfig({
         name: 'Ski Crazed',
         short_name: 'SkiCrazed',
         description: 'A faithful PWA recreation of the classic 1987 Apple II ski game by Jason Rubin & Andy Gavin',
-        start_url: '/',
+        start_url: '/SkiCrazed/',
         display: 'fullscreen',
         orientation: 'landscape',
         background_color: '#000000',
