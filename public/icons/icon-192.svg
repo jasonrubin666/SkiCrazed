@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="192" height="192" viewBox="0 0 192 192">
+  <rect width="192" height="192" fill="#000"/>
+  <polygon points="20,140 60,50 100,90 140,40 180,80 180,140" fill="#0078F0"/>
+  <rect x="0" y="140" width="192" height="52" fill="#FFF"/>
+  <text x="96" y="32" text-anchor="middle" fill="#14B81A" font-family="monospace" font-size="24" font-weight="bold">SKI</text>
+  <text x="96" y="54" text-anchor="middle" fill="#C840E0" font-family="monospace" font-size="18" font-weight="bold">CRAZED</text>
+  <!-- Skier -->
+  <rect x="88" y="100" width="6" height="6" fill="#FFF"/>
+  <rect x="86" y="106" width="10" height="10" fill="#C840E0"/>
+  <rect x="86" y="116" width="4" height="8" fill="#C840E0"/>
+  <rect x="92" y="116" width="4" height="8" fill="#C840E0"/>
+  <rect x="82" y="124" width="6" height="3" fill="#0078F0"/>
+  <rect x="94" y="124" width="6" height="3" fill="#0078F0"/>
+</svg>

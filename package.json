@@ -1,0 +1,23 @@
+{
+  "name": "skicrazed",
+  "version": "1.0.0",
+  "description": "A faithful PWA recreation of the classic 1987 Apple II ski game by Jason Rubin & Andy Gavin",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc --noEmit && vite build",
+    "preview": "vite preview"
+  },
+  "repository": {
+    "type": "git",
+    "url": "http://local_proxy@127.0.0.1:64495/git/jasonrubin666/SkiCrazed"
+  },
+  "keywords": ["ski", "retro", "pwa", "game", "apple-ii"],
+  "author": "JAM Software (Recreation)",
+  "license": "ISC",
+  "devDependencies": {
+    "typescript": "^5.9.3",
+    "vite": "^7.3.1",
+    "vite-plugin-pwa": "^1.2.0"
+  }
+}
