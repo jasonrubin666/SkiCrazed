@@ -1,6 +1,6 @@
 {
   "name": "skicrazed",
-  "version": "1.1.0",
+  "version": "1.2.0",
   "description": "A faithful PWA recreation of the classic 1987 Apple II ski game by Jason Rubin & Andy Gavin",
   "type": "module",
   "scripts": {
