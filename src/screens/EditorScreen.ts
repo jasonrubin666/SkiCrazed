@@ -8,6 +8,7 @@ import {
   ICE_PATCH, FLAG_RED, FLAG_BLUE, WARNING_SIGN,
   drawSprite, SpriteData
 } from '../rendering/Sprites';
+import { drawText, drawTextCentered, drawTextRight, CHAR_H } from '../rendering/BitmapFont';
 
 type EditorMode = 'slot_select' | 'editing';
 
@@ -151,37 +152,25 @@ export class EditorScreen {
     ctx.fillStyle = COLORS.BLACK;
     ctx.fillRect(0, 0, GAME_WIDTH, GAME_HEIGHT);
 
-    ctx.fillStyle = COLORS.GREEN;
-    ctx.font = '8px monospace';
-    ctx.textAlign = 'center';
-    ctx.fillText('SLOPE EDITOR', GAME_WIDTH / 2, 16);
-
-    ctx.fillStyle = COLORS.WHITE;
-    ctx.font = '6px monospace';
-    ctx.fillText('SELECT A SLOT:', GAME_WIDTH / 2, 30);
+    drawTextCentered(ctx, 'SLOPE EDITOR', 8, COLORS.GREEN);
+    drawTextCentered(ctx, 'SELECT A SLOT:', 24, COLORS.WHITE);
 
     for (let i = 0; i < MAX_CUSTOM_SLOPES; i++) {
-      const y = 44 + i * 12;
+      const y = 40 + i * 12;
       const selected = i === this.selectedSlot;
 
       if (selected) {
         ctx.fillStyle = COLORS.GREEN;
-        ctx.fillRect(40, y - 7, GAME_WIDTH - 80, 10);
-        ctx.fillStyle = COLORS.BLACK;
-      } else {
-        ctx.fillStyle = COLORS.WHITE;
+        ctx.fillRect(40, y - 1, GAME_WIDTH - 80, CHAR_H + 2);
       }
 
-      ctx.font = '5px monospace';
-      ctx.textAlign = 'center';
       const name = this.slots[i].name || '(EMPTY)';
       const count = this.slots[i].obstacles.length;
-      ctx.fillText(`${i + 1}. ${name} ${count > 0 ? `(${count} OBS)` : ''}`, GAME_WIDTH / 2, y);
+      const label = `${i + 1}. ${name} ${count > 0 ? `(${count} OBS)` : ''}`;
+      drawTextCentered(ctx, label, y, selected ? COLORS.BLACK : COLORS.WHITE);
     }
 
-    ctx.fillStyle = COLORS.BLUE;
-    ctx.font = '5px monospace';
-    ctx.fillText('ENTER TO EDIT  -  ESC TO GO BACK', GAME_WIDTH / 2, GAME_HEIGHT - 8);
+    drawTextCentered(ctx, 'ENTER TO EDIT - ESC TO GO BACK', GAME_HEIGHT - 8, COLORS.BLUE);
   }
 
   private renderEditing(ctx: CanvasRenderingContext2D): void {
@@ -190,22 +179,17 @@ export class EditorScreen {
     ctx.fillRect(0, 0, GAME_WIDTH, GAME_HEIGHT);
 
     // Grid lines
-    ctx.strokeStyle = COLORS.BLUE;
-    ctx.lineWidth = 1;
-    ctx.globalAlpha = 0.2;
+    ctx.fillStyle = COLORS.BLUE;
     for (let x = 0; x < GAME_WIDTH; x += 20) {
-      ctx.beginPath();
-      ctx.moveTo(x, 0);
-      ctx.lineTo(x, GAME_HEIGHT - 20);
-      ctx.stroke();
+      for (let y = 0; y < GAME_HEIGHT - 20; y += 2) {
+        ctx.fillRect(x, y, 1, 1);
+      }
     }
     for (let y = 50; y < 160; y += 20) {
-      ctx.beginPath();
-      ctx.moveTo(0, y);
-      ctx.lineTo(GAME_WIDTH, y);
-      ctx.stroke();
+      for (let x = 0; x < GAME_WIDTH; x += 2) {
+        ctx.fillRect(x, y, 1, 1);
+      }
     }
-    ctx.globalAlpha = 1;
 
     // Draw placed obstacles
     for (const obs of this.obstacles) {
@@ -223,24 +207,18 @@ export class EditorScreen {
     drawSprite(ctx, currentPalette.sprite, this.cursorX - currentPalette.sprite.width / 2, this.cursorY - currentPalette.sprite.height / 2);
     ctx.globalAlpha = 1;
 
-    // Cursor crosshair
-    ctx.strokeStyle = COLORS.ORANGE;
-    ctx.lineWidth = 1;
-    ctx.strokeRect(this.cursorX - 2, this.cursorY - 2, 5, 5);
+    // Cursor crosshair (pixel-perfect)
+    ctx.fillStyle = COLORS.ORANGE;
+    ctx.fillRect(this.cursorX - 2, this.cursorY, 5, 1);
+    ctx.fillRect(this.cursorX, this.cursorY - 2, 1, 5);
 
     // HUD bar at bottom
     ctx.fillStyle = COLORS.BLACK;
     ctx.fillRect(0, GAME_HEIGHT - 18, GAME_WIDTH, 18);
 
-    ctx.fillStyle = COLORS.GREEN;
-    ctx.font = '5px monospace';
-    ctx.textAlign = 'left';
-    ctx.fillText(`ITEM: ${currentPalette.label}`, 4, GAME_HEIGHT - 9);
-    ctx.fillText(`POS: ${this.cursorX + this.scrollX},${this.cursorY}`, 80, GAME_HEIGHT - 9);
-    ctx.fillText(`OBS: ${this.obstacles.length}`, 160, GAME_HEIGHT - 9);
-
-    ctx.fillStyle = COLORS.BLUE;
-    ctx.textAlign = 'right';
-    ctx.fillText('ESC=CYCLE  Z/X=SCROLL', GAME_WIDTH - 4, GAME_HEIGHT - 9);
+    drawText(ctx, `ITEM: ${currentPalette.label}`, 4, GAME_HEIGHT - 14, COLORS.GREEN);
+    drawText(ctx, `POS: ${this.cursorX + this.scrollX},${this.cursorY}`, 80, GAME_HEIGHT - 14, COLORS.GREEN);
+    drawText(ctx, `OBS: ${this.obstacles.length}`, 160, GAME_HEIGHT - 14, COLORS.GREEN);
+    drawTextRight(ctx, 'ESC=CYCLE Z/X=SCROLL', GAME_WIDTH - 4, GAME_HEIGHT - 14, COLORS.BLUE);
   }
 }

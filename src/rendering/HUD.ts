@@ -1,4 +1,5 @@
 import { GAME_WIDTH, GAME_HEIGHT, COLORS, HUD_Y, HUD_HEIGHT, MAX_FALLS } from '../data/Constants';
+import { drawText, drawTextCentered, drawTextRight } from './BitmapFont';
 
 /**
  * Heads-up display: slope progress bar and fall counter.
@@ -22,10 +23,12 @@ export class HUD {
     const barW = GAME_WIDTH - 80;
     const barH = 6;
 
-    // Bar outline
-    ctx.strokeStyle = COLORS.WHITE;
-    ctx.lineWidth = 1;
-    ctx.strokeRect(barX, barY, barW, barH);
+    // Bar outline (pixel-perfect, no strokeRect)
+    ctx.fillStyle = COLORS.WHITE;
+    ctx.fillRect(barX, barY, barW, 1);
+    ctx.fillRect(barX, barY + barH, barW, 1);
+    ctx.fillRect(barX, barY, 1, barH);
+    ctx.fillRect(barX + barW - 1, barY, 1, barH);
 
     // Progress fill
     ctx.fillStyle = COLORS.GREEN;
@@ -37,22 +40,15 @@ export class HUD {
     ctx.fillRect(markerX - 1, barY - 1, 3, barH + 2);
 
     // Falls counter
-    ctx.fillStyle = falls >= MAX_FALLS - 3 ? COLORS.ORANGE : COLORS.WHITE;
-    ctx.font = '6px monospace';
-    ctx.textAlign = 'right';
-    ctx.fillText(`FALLS:${falls}/${MAX_FALLS}`, GAME_WIDTH - 4, barY + 5);
+    const fallColor = falls >= MAX_FALLS - 3 ? COLORS.ORANGE : COLORS.WHITE;
+    drawTextRight(ctx, `FALLS:${falls}/${MAX_FALLS}`, GAME_WIDTH - 4, barY, fallColor);
 
     // Slope name
-    ctx.fillStyle = COLORS.WHITE;
-    ctx.textAlign = 'left';
-    ctx.fillText(`${slopeNumber}. ${slopeName}`, barX, HUD_Y + 18);
+    drawText(ctx, `${slopeNumber}. ${slopeName}`, barX, HUD_Y + 14, COLORS.WHITE);
 
     // Pause indicator
     if (isPaused) {
-      ctx.fillStyle = COLORS.ORANGE;
-      ctx.textAlign = 'center';
-      ctx.font = '8px monospace';
-      ctx.fillText('PAUSED', GAME_WIDTH / 2, GAME_HEIGHT / 2);
+      drawTextCentered(ctx, 'PAUSED', GAME_HEIGHT / 2 - 4, COLORS.ORANGE);
     }
   }
 }

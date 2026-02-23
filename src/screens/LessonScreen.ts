@@ -1,5 +1,6 @@
 import { GAME_WIDTH, GAME_HEIGHT, COLORS } from '../data/Constants';
 import { drawSprite, JAMMER, SKIER_SKIING, SKIER_JUMPING, SKIER_TRICK_BACKSCRATCHER, SKIER_TRICK_DAFFY, SpriteData } from '../rendering/Sprites';
+import { drawText, drawTextCentered, CHAR_H } from '../rendering/BitmapFont';
 import { InputState } from '../input/InputManager';
 import { AudioManager } from '../audio/AudioManager';
 
@@ -122,22 +123,21 @@ export class LessonScreen {
     // Jammer sprite
     drawSprite(ctx, JAMMER, 20, 30);
 
-    // Speech bubble area
-    ctx.strokeStyle = COLORS.WHITE;
-    ctx.lineWidth = 1;
-    ctx.strokeRect(45, 15, GAME_WIDTH - 55, 70);
+    // Speech bubble area (pixel-perfect box)
+    ctx.fillStyle = COLORS.WHITE;
+    // Top and bottom edges
+    ctx.fillRect(45, 15, GAME_WIDTH - 55, 1);
+    ctx.fillRect(45, 85, GAME_WIDTH - 55, 1);
+    // Left and right edges
+    ctx.fillRect(45, 15, 1, 71);
+    ctx.fillRect(GAME_WIDTH - 11, 15, 1, 71);
 
     // Title
-    ctx.fillStyle = COLORS.GREEN;
-    ctx.font = '7px monospace';
-    ctx.textAlign = 'left';
-    ctx.fillText(lesson.title, 50, 28);
+    drawText(ctx, lesson.title, 50, 20, COLORS.GREEN);
 
     // Text
-    ctx.fillStyle = COLORS.WHITE;
-    ctx.font = '5px monospace';
     lesson.text.forEach((line, i) => {
-      ctx.fillText(line, 50, 40 + i * 9);
+      drawText(ctx, line, 50, 32 + i * (CHAR_H + 2), COLORS.WHITE);
     });
 
     // Optional sprite demo
@@ -146,12 +146,7 @@ export class LessonScreen {
     }
 
     // Progress indicator
-    ctx.fillStyle = COLORS.PURPLE;
-    ctx.font = '5px monospace';
-    ctx.textAlign = 'center';
-    ctx.fillText(`LESSON ${this.lessonIndex + 1}/${LESSONS.length}`, GAME_WIDTH / 2, GAME_HEIGHT - 20);
-
-    ctx.fillStyle = COLORS.BLUE;
-    ctx.fillText('ENTER/TAP TO CONTINUE  -  ESC TO SKIP', GAME_WIDTH / 2, GAME_HEIGHT - 8);
+    drawTextCentered(ctx, `LESSON ${this.lessonIndex + 1}/${LESSONS.length}`, GAME_HEIGHT - 22, COLORS.PURPLE);
+    drawTextCentered(ctx, 'ENTER/TAP = NEXT - ESC = SKIP', GAME_HEIGHT - 8, COLORS.BLUE);
   }
 }

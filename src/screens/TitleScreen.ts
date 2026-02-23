@@ -1,5 +1,6 @@
 import { GAME_WIDTH, GAME_HEIGHT, COLORS } from '../data/Constants';
 import { drawSprite, TITLE_SKIER, drawMenuSkierHead, drawTerrain } from '../rendering/Sprites';
+import { drawText, drawTextCentered, drawTextRight, CHAR_H } from '../rendering/BitmapFont';
 import { InputState } from '../input/InputManager';
 import { AudioManager } from '../audio/AudioManager';
 
@@ -87,35 +88,24 @@ export class TitleScreen {
     ctx.fillStyle = COLORS.WHITE;
     ctx.fillRect(skierX - 20, skierY + TITLE_SKIER.height + 2, TITLE_SKIER.width + 40, 2);
 
-    // Credits text (matching original Apple IIe layout)
-    ctx.textAlign = 'center';
+    // Credits text (Apple IIe grid-aligned)
+    const creditsY = skierY + TITLE_SKIER.height + 16;
 
-    ctx.fillStyle = COLORS.GREEN;
-    ctx.font = '6px monospace';
-    ctx.fillText('PROGRAMMING AND ART', GAME_WIDTH / 2, skierY + TITLE_SKIER.height + 20);
-    ctx.fillStyle = COLORS.WHITE;
-    ctx.fillText('JASON RUBIN', GAME_WIDTH / 2, skierY + TITLE_SKIER.height + 30);
+    drawTextCentered(ctx, 'PROGRAMMING AND ART', creditsY, COLORS.GREEN);
+    drawTextCentered(ctx, 'JASON RUBIN', creditsY + CHAR_H + 2, COLORS.WHITE);
 
-    ctx.fillStyle = COLORS.GREEN;
-    ctx.fillText('PROGRAMMING', GAME_WIDTH / 2, skierY + TITLE_SKIER.height + 44);
-    ctx.fillStyle = COLORS.WHITE;
-    ctx.fillText('ANDY GAVIN', GAME_WIDTH / 2, skierY + TITLE_SKIER.height + 54);
+    drawTextCentered(ctx, 'PROGRAMMING', creditsY + CHAR_H * 3, COLORS.GREEN);
+    drawTextCentered(ctx, 'ANDY GAVIN', creditsY + CHAR_H * 4 + 2, COLORS.WHITE);
 
     // JAM Software logo text
-    ctx.fillStyle = COLORS.ORANGE;
-    ctx.font = '7px monospace';
-    ctx.fillText('JAM SOFTWARE', GAME_WIDTH / 2, GAME_HEIGHT - 40);
+    drawTextCentered(ctx, 'JAM SOFTWARE', GAME_HEIGHT - 42, COLORS.ORANGE);
 
-    ctx.fillStyle = COLORS.WHITE;
-    ctx.font = '5px monospace';
-    ctx.fillText('COPYRIGHT (C) 1987', GAME_WIDTH / 2, GAME_HEIGHT - 28);
-    ctx.fillText('PRODUCED BY: BAUDVILLE', GAME_WIDTH / 2, GAME_HEIGHT - 20);
+    drawTextCentered(ctx, 'COPYRIGHT (C) 1987', GAME_HEIGHT - 30, COLORS.WHITE);
+    drawTextCentered(ctx, 'PRODUCED BY: BAUDVILLE', GAME_HEIGHT - 20, COLORS.WHITE);
 
     // Blinking "press any key" text
     if (Math.floor(this.animTimer / 30) % 2 === 0) {
-      ctx.fillStyle = COLORS.GREEN;
-      ctx.font = '5px monospace';
-      ctx.fillText('PRESS ANY KEY / TAP TO START', GAME_WIDTH / 2, GAME_HEIGHT - 6);
+      drawTextCentered(ctx, 'PRESS ANY KEY / TAP TO START', GAME_HEIGHT - 6, COLORS.GREEN);
     }
   }
 
@@ -131,11 +121,8 @@ export class TitleScreen {
     drawMenuSkierHead(ctx, 70, GAME_HEIGHT / 2 - 10);
 
     // "MAIN MENU" title on the right side
-    ctx.fillStyle = COLORS.WHITE;
-    ctx.font = '8px monospace';
-    ctx.textAlign = 'center';
     const menuCenterX = 200;
-    ctx.fillText('MAIN MENU', menuCenterX, 18);
+    drawText(ctx, 'MAIN MENU', menuCenterX - 31, 10, COLORS.WHITE);
 
     // Menu items on the right
     const menuStartY = 44;
@@ -144,29 +131,23 @@ export class TitleScreen {
     for (let i = 0; i < MENU_ITEMS.length; i++) {
       const y = menuStartY + i * lineHeight;
       const selected = i === this.selectedIndex;
+      const label = MENU_ITEMS[i].label;
+      const labelW = label.length * 7;
+      const labelX = menuCenterX - Math.floor(labelW / 2);
 
       if (selected) {
         ctx.fillStyle = COLORS.WHITE;
-        ctx.fillRect(145, y - 8, 110, 14);
-        ctx.fillStyle = COLORS.BLACK;
+        ctx.fillRect(labelX - 4, y - 2, labelW + 8, 12);
+        drawText(ctx, label, labelX, y, COLORS.BLACK);
       } else {
-        ctx.fillStyle = COLORS.GREEN;
+        drawText(ctx, label, labelX, y, COLORS.GREEN);
       }
-
-      ctx.font = '6px monospace';
-      ctx.textAlign = 'center';
-      ctx.fillText(MENU_ITEMS[i].label, menuCenterX, y);
     }
 
     // Controls info
-    ctx.fillStyle = COLORS.WHITE;
-    ctx.font = '5px monospace';
-    ctx.textAlign = 'center';
-    ctx.fillText('USE ARROWS AND RETURN', menuCenterX, GAME_HEIGHT - 38);
+    drawText(ctx, 'USE ARROWS AND RETURN', menuCenterX - 73, GAME_HEIGHT - 38, COLORS.WHITE);
 
     // Baudville
-    ctx.fillStyle = COLORS.ORANGE;
-    ctx.textAlign = 'right';
-    ctx.fillText('BAUDVILLE', GAME_WIDTH - 8, GAME_HEIGHT - 4);
+    drawTextRight(ctx, 'BAUDVILLE', GAME_WIDTH - 4, GAME_HEIGHT - 10, COLORS.ORANGE);
   }
 }
