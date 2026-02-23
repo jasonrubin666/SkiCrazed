@@ -1,26 +1,30 @@
 import { GAME_WIDTH, GAME_HEIGHT, COLORS } from '../data/Constants';
-import { drawSprite, SKIER_SKIING } from '../rendering/Sprites';
+import { drawSprite, TITLE_SKIER } from '../rendering/Sprites';
 import { InputState } from '../input/InputManager';
 import { AudioManager } from '../audio/AudioManager';
 
 export type TitleMenuOption = 'start' | 'lessons' | 'practice' | 'editor' | 'options';
 
 const MENU_ITEMS: { label: string; value: TitleMenuOption }[] = [
-  { label: 'START GAME', value: 'start' },
-  { label: 'LESSONS', value: 'lessons' },
-  { label: 'PRACTICE SLALOM', value: 'practice' },
+  { label: 'THE KILIMANJARO SKI TOURNAMENT', value: 'start' },
+  { label: 'SKI LESSONS', value: 'lessons' },
+  { label: 'PRACTICE COURSE', value: 'practice' },
   { label: 'MAKE A SLOPE', value: 'editor' },
   { label: 'OPTIONS', value: 'options' },
 ];
 
+type ScreenMode = 'splash' | 'menu';
+
 export class TitleScreen {
   private selectedIndex = 0;
   private animTimer = 0;
-  private skierX = -10;
+  private mode: ScreenMode = 'splash';
   private music: { stop: () => void } | null = null;
 
   enter(audio: AudioManager): void {
     this.music = audio.titleMusic();
+    this.mode = 'splash';
+    this.animTimer = 0;
   }
 
   exit(): void {
@@ -30,8 +34,18 @@ export class TitleScreen {
 
   update(input: InputState, audio: AudioManager): TitleMenuOption | null {
     this.animTimer++;
-    this.skierX = (this.skierX + 1) % (GAME_WIDTH + 30);
 
+    if (this.mode === 'splash') {
+      // Any input transitions to menu
+      if (input.confirm || input.up || input.down || input.trick1 || input.trick2) {
+        this.mode = 'menu';
+        this.selectedIndex = 0;
+        audio.menuSelect();
+      }
+      return null;
+    }
+
+    // Menu mode
     if (input.up) {
       this.selectedIndex = (this.selectedIndex - 1 + MENU_ITEMS.length) % MENU_ITEMS.length;
       audio.menuMove();
@@ -39,6 +53,10 @@ export class TitleScreen {
     if (input.down) {
       this.selectedIndex = (this.selectedIndex + 1) % MENU_ITEMS.length;
       audio.menuMove();
+    }
+    if (input.back) {
+      this.mode = 'splash';
+      return null;
     }
     if (input.confirm) {
       audio.menuSelect();
@@ -49,62 +67,76 @@ export class TitleScreen {
   }
 
   render(ctx: CanvasRenderingContext2D): void {
-    // Background
+    if (this.mode === 'splash') {
+      this.renderSplash(ctx);
+    } else {
+      this.renderMenu(ctx);
+    }
+  }
+
+  private renderSplash(ctx: CanvasRenderingContext2D): void {
+    // Black background
     ctx.fillStyle = COLORS.BLACK;
     ctx.fillRect(0, 0, GAME_WIDTH, GAME_HEIGHT);
 
-    // Mountain silhouette
-    ctx.fillStyle = COLORS.BLUE;
-    ctx.beginPath();
-    ctx.moveTo(0, 80);
-    ctx.lineTo(40, 35);
-    ctx.lineTo(80, 55);
-    ctx.lineTo(120, 25);
-    ctx.lineTo(160, 50);
-    ctx.lineTo(200, 30);
-    ctx.lineTo(240, 45);
-    ctx.lineTo(280, 60);
-    ctx.lineTo(280, 80);
-    ctx.closePath();
-    ctx.fill();
-
-    // Snow ground
-    ctx.fillStyle = COLORS.WHITE;
-    ctx.fillRect(0, 80, GAME_WIDTH, 4);
-
-    // Title text
+    // Title text at top
     ctx.fillStyle = COLORS.GREEN;
     ctx.font = '12px monospace';
     ctx.textAlign = 'center';
-    ctx.fillText('SKI CRAZED', GAME_WIDTH / 2, 20);
+    ctx.fillText('SKI CRAZED', GAME_WIDTH / 2, 18);
 
-    // Subtitle
-    ctx.fillStyle = COLORS.PURPLE;
-    ctx.font = '6px monospace';
-    ctx.fillText('MOUNT KILIMANJARO TOURNAMENT', GAME_WIDTH / 2, 32);
+    // Draw the large skier centered
+    const skierX = Math.floor((GAME_WIDTH - TITLE_SKIER.width) / 2);
+    const skierY = 28;
+    drawSprite(ctx, TITLE_SKIER, skierX, skierY);
+
+    // White snow ground line under skier
+    ctx.fillStyle = COLORS.WHITE;
+    ctx.fillRect(0, skierY + TITLE_SKIER.height + 2, GAME_WIDTH, 3);
 
     // Credits
     ctx.fillStyle = COLORS.ORANGE;
     ctx.font = '5px monospace';
-    ctx.fillText('ORIGINALLY BY JAM SOFTWARE 1987', GAME_WIDTH / 2, 42);
+    ctx.textAlign = 'center';
+    ctx.fillText('ORIGINALLY BY JAM SOFTWARE 1987', GAME_WIDTH / 2, GAME_HEIGHT - 30);
 
-    // Animated skier across snow
-    const skierFrame = SKIER_SKIING[Math.floor(this.animTimer / 10) % SKIER_SKIING.length];
-    drawSprite(ctx, skierFrame, this.skierX - 10, 70);
+    // Blinking "press any key" text
+    if (Math.floor(this.animTimer / 30) % 2 === 0) {
+      ctx.fillStyle = COLORS.WHITE;
+      ctx.font = '6px monospace';
+      ctx.fillText('PRESS ANY KEY / TAP TO START', GAME_WIDTH / 2, GAME_HEIGHT - 12);
+    }
+  }
+
+  private renderMenu(ctx: CanvasRenderingContext2D): void {
+    // Blue background (matches original Apple IIe menu)
+    ctx.fillStyle = COLORS.BLUE;
+    ctx.fillRect(0, 0, GAME_WIDTH, GAME_HEIGHT);
+
+    // Title at top
+    ctx.fillStyle = COLORS.WHITE;
+    ctx.font = '8px monospace';
+    ctx.textAlign = 'center';
+    ctx.fillText('SKI CRAZED', GAME_WIDTH / 2, 20);
+
+    // Subtitle
+    ctx.fillStyle = COLORS.WHITE;
+    ctx.font = '6px monospace';
+    ctx.fillText('SELECT AN OPTION:', GAME_WIDTH / 2, 38);
 
     // Menu items
-    const menuStartY = 100;
-    const lineHeight = 14;
+    const menuStartY = 60;
+    const lineHeight = 18;
 
     for (let i = 0; i < MENU_ITEMS.length; i++) {
       const y = menuStartY + i * lineHeight;
       const selected = i === this.selectedIndex;
 
       if (selected) {
-        // Selection highlight
-        ctx.fillStyle = COLORS.GREEN;
-        ctx.fillRect(60, y - 7, GAME_WIDTH - 120, 11);
-        ctx.fillStyle = COLORS.BLACK;
+        // White selection highlight bar
+        ctx.fillStyle = COLORS.WHITE;
+        ctx.fillRect(20, y - 8, GAME_WIDTH - 40, 13);
+        ctx.fillStyle = COLORS.BLUE;
       } else {
         ctx.fillStyle = COLORS.WHITE;
       }
@@ -114,10 +146,11 @@ export class TitleScreen {
       ctx.fillText(MENU_ITEMS[i].label, GAME_WIDTH / 2, y);
     }
 
-    // Controls hint
-    ctx.fillStyle = COLORS.BLUE;
+    // Footer hint
+    ctx.fillStyle = COLORS.WHITE;
     ctx.font = '5px monospace';
     ctx.textAlign = 'center';
-    ctx.fillText('ARROWS/TOUCH TO SELECT  -  ENTER/TAP TO START', GAME_WIDTH / 2, GAME_HEIGHT - 8);
+    ctx.fillText('ARROWS/TOUCH TO SELECT  -  ENTER/TAP TO START', GAME_WIDTH / 2, GAME_HEIGHT - 10);
+    ctx.fillText('ESC/BACK FOR TITLE', GAME_WIDTH / 2, GAME_HEIGHT - 3);
   }
 }

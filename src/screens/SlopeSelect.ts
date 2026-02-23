@@ -50,11 +50,12 @@ export class SlopeSelect {
   }
 
   render(ctx: CanvasRenderingContext2D): void {
-    ctx.fillStyle = COLORS.BLACK;
+    // Blue background matching original Apple IIe menu
+    ctx.fillStyle = COLORS.BLUE;
     ctx.fillRect(0, 0, GAME_WIDTH, GAME_HEIGHT);
 
     // Title
-    ctx.fillStyle = COLORS.GREEN;
+    ctx.fillStyle = COLORS.WHITE;
     ctx.font = '8px monospace';
     ctx.textAlign = 'center';
     ctx.fillText('SELECT SLOPE', GAME_WIDTH / 2, 14);
@@ -72,12 +73,12 @@ export class SlopeSelect {
       const y = startY + i * lineHeight;
 
       if (selected) {
-        ctx.fillStyle = COLORS.GREEN;
+        ctx.fillStyle = COLORS.WHITE;
         ctx.fillRect(8, y - 7, GAME_WIDTH - 16, 12);
       }
 
       // Slope number and name
-      ctx.fillStyle = selected ? COLORS.BLACK : (unlocked ? COLORS.WHITE : COLORS.PURPLE);
+      ctx.fillStyle = selected ? COLORS.BLUE : (unlocked ? COLORS.WHITE : COLORS.BLACK);
       ctx.font = '6px monospace';
       ctx.textAlign = 'left';
       const typeTag = slope.type === 'slalom' ? ' [SL]' : '';
@@ -93,9 +94,9 @@ export class SlopeSelect {
         const barX = GAME_WIDTH - 56;
         ctx.fillStyle = COLORS.BLACK;
         ctx.fillRect(barX, y - 5, barW, 6);
-        ctx.fillStyle = perf >= 70 ? COLORS.GREEN : (perf >= 40 ? COLORS.ORANGE : COLORS.PURPLE);
+        ctx.fillStyle = perf >= 70 ? COLORS.GREEN : (perf >= 40 ? COLORS.ORANGE : COLORS.WHITE);
         ctx.fillRect(barX, y - 5, Math.floor(barW * perf / 100), 6);
-        ctx.fillStyle = selected ? COLORS.BLACK : COLORS.WHITE;
+        ctx.fillStyle = selected ? COLORS.BLUE : COLORS.WHITE;
         ctx.textAlign = 'right';
         ctx.fillText(`${Math.floor(perf)}%`, GAME_WIDTH - 12, y);
       }
