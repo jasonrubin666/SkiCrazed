@@ -1,6 +1,7 @@
 import { GAME_WIDTH, GAME_HEIGHT, COLORS, MAX_FALLS } from '../data/Constants';
 import { InputState } from '../input/InputManager';
 import { AudioManager } from '../audio/AudioManager';
+import { drawTerrain, drawMountains, drawSprite, LODGE } from '../rendering/Sprites';
 
 export interface SlopeResult {
   slopeName: string;
@@ -84,28 +85,44 @@ export class ResultScreen {
   }
 
   render(ctx: CanvasRenderingContext2D): void {
-    ctx.fillStyle = COLORS.BLACK;
+    // Blue sky background
+    ctx.fillStyle = COLORS.BLUE;
     ctx.fillRect(0, 0, GAME_WIDTH, GAME_HEIGHT);
 
-    // Title
+    // "Ski Crazed" banner with result
+    const bannerText = this.qualified ? 'Ski Crazed  GOOD JOB!' :
+      (this.result.disqualified ? 'Ski Crazed  OH NO!' : 'Ski Crazed  TRY AGAIN');
+    ctx.fillStyle = COLORS.WHITE;
+    ctx.fillRect(0, 0, GAME_WIDTH, 16);
     ctx.fillStyle = this.qualified ? COLORS.GREEN : COLORS.ORANGE;
     ctx.font = '8px monospace';
     ctx.textAlign = 'center';
-    ctx.fillText(
-      this.result.disqualified ? 'DISQUALIFIED!' : 'PERFORMANCE CHART',
-      GAME_WIDTH / 2, 16
-    );
+    ctx.fillText(bannerText, GAME_WIDTH / 2, 12);
+
+    // Mountains in background
+    drawMountains(ctx, 50, GAME_WIDTH);
+
+    // Orange cross-hatched terrain
+    drawTerrain(ctx, 0, 50, GAME_WIDTH, GAME_HEIGHT - 50);
+
+    // Lodge at bottom right
+    drawSprite(ctx, LODGE, GAME_WIDTH - LODGE.width - 8, GAME_HEIGHT - LODGE.height - 20);
+
+    // Stats panel (dark overlay)
+    ctx.fillStyle = 'rgba(0, 0, 0, 0.75)';
+    ctx.fillRect(15, 22, GAME_WIDTH - 30, 120);
 
     // Slope name
     ctx.fillStyle = COLORS.WHITE;
     ctx.font = '6px monospace';
-    ctx.fillText(`${this.result.slopeNumber}. ${this.result.slopeName}`, GAME_WIDTH / 2, 28);
+    ctx.textAlign = 'center';
+    ctx.fillText(`${this.result.slopeNumber}. ${this.result.slopeName}`, GAME_WIDTH / 2, 34);
 
     // Performance bar (animated fill)
-    const barX = 40;
-    const barY = 40;
-    const barW = GAME_WIDTH - 80;
-    const barH = 16;
+    const barX = 30;
+    const barY = 42;
+    const barW = GAME_WIDTH - 60;
+    const barH = 14;
     const fillAmount = Math.min(1, this.animTimer / 90);
     const fillW = Math.floor(barW * (this.performance / 100) * fillAmount);
 
@@ -120,9 +137,9 @@ export class ResultScreen {
 
     // Percentage text
     ctx.fillStyle = COLORS.WHITE;
-    ctx.font = '10px monospace';
+    ctx.font = '8px monospace';
     ctx.textAlign = 'center';
-    ctx.fillText(`${Math.floor(this.performance * fillAmount)}%`, GAME_WIDTH / 2, barY + 13);
+    ctx.fillText(`${Math.floor(this.performance * fillAmount)}%`, GAME_WIDTH / 2, barY + 12);
 
     // Stats
     const statsY = 72;
@@ -131,15 +148,14 @@ export class ResultScreen {
     ctx.textAlign = 'left';
 
     ctx.fillStyle = COLORS.WHITE;
-    ctx.fillText(`FALLS: ${this.result.falls}/${MAX_FALLS}`, 40, statsY);
-
-    ctx.fillText(`MOGULS: ${this.result.mogulsPassed}/${this.result.mogulsTotal}`, 40, statsY + statLine);
+    ctx.fillText(`FALLS: ${this.result.falls}/${MAX_FALLS}`, 30, statsY);
+    ctx.fillText(`MOGULS: ${this.result.mogulsPassed}/${this.result.mogulsTotal}`, 30, statsY + statLine);
 
     if (this.result.flagsTotal > 0) {
-      ctx.fillText(`FLAGS: ${this.result.flagsPassed}/${this.result.flagsTotal}`, 40, statsY + statLine * 2);
+      ctx.fillText(`FLAGS: ${this.result.flagsPassed}/${this.result.flagsTotal}`, 30, statsY + statLine * 2);
     }
 
-    ctx.fillText(`TRICKS: ${this.result.tricksLanded}`, 40, statsY + statLine * 3);
+    ctx.fillText(`TRICKS: ${this.result.tricksLanded}`, 30, statsY + statLine * 3);
 
     // Qualification message
     if (this.animTimer > 60) {
@@ -147,18 +163,18 @@ export class ResultScreen {
       ctx.textAlign = 'center';
       if (this.result.disqualified) {
         ctx.fillStyle = COLORS.ORANGE;
-        ctx.fillText('TOO MANY FALLS! TRY AGAIN.', GAME_WIDTH / 2, 140);
+        ctx.fillText('TOO MANY FALLS! TRY AGAIN.', GAME_WIDTH / 2, 126);
       } else if (this.qualified) {
         ctx.fillStyle = COLORS.GREEN;
-        ctx.fillText('QUALIFIED! MOVING ON!', GAME_WIDTH / 2, 140);
+        ctx.fillText('QUALIFIED! MOVING ON!', GAME_WIDTH / 2, 126);
       } else {
         ctx.fillStyle = COLORS.PURPLE;
-        ctx.fillText('NOT ENOUGH. TRY AGAIN!', GAME_WIDTH / 2, 140);
+        ctx.fillText('NOT ENOUGH. TRY AGAIN!', GAME_WIDTH / 2, 126);
       }
 
-      ctx.fillStyle = COLORS.BLUE;
+      ctx.fillStyle = COLORS.WHITE;
       ctx.font = '5px monospace';
-      ctx.fillText('PRESS ENTER/TAP TO CONTINUE', GAME_WIDTH / 2, GAME_HEIGHT - 10);
+      ctx.fillText('PRESS ENTER/TAP TO CONTINUE', GAME_WIDTH / 2, GAME_HEIGHT - 8);
     }
   }
 }

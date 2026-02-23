@@ -254,37 +254,32 @@ export const TREE: SpriteData[] = [
   ]),
 ];
 
-// ======= LARGE TITLE SKIER (for title splash screen) =======
+// ======= LARGE TITLE SKIER (for splash/credits screen) =======
 
 export const TITLE_SKIER: SpriteData = parseSprite([
-  '____________WWWW____________',
-  '___________WWWWWW___________',
-  '___________WWWWWW___________',
-  '__________WWPPPPWW__________',
-  '__________WWPPPPWW__________',
-  '___________WWWWWW___________',
-  '____________WWWW____________',
-  '___________PPPPPP___________',
-  '__________PPPPPPPP__________',
-  '_________PPPPPPPPPP_________',
-  '________WWPPPPPPPPWW________',
-  '________WWPPPPPPPPWW________',
-  '________WWPPPPPPPPWW________',
-  '_______WWWPPPPPPPPWWW_______',
-  '_______WW_PPPPPPPP_WW_______',
-  '__________PPPPPPPP__________',
-  '__________PPPPPPPP__________',
-  '__________PPP__PPP__________',
-  '_________PPP____PPP_________',
-  '_________PP______PP_________',
-  '________PP________PP________',
-  '_______PP__________PP_______',
-  '______PP____________PP______',
-  '_____PP______________PP_____',
-  '____BB________________BB____',
-  '___BBB________________BBB___',
-  '__BBB__________________BBB__',
-  '_BBB____________________BBB_',
+  '________WW________',
+  '_______WWWW_______',
+  '______WWWWWW______',
+  '______WPPPWW______',
+  '______WPPPWW______',
+  '______WWWWWW______',
+  '_______WWWW_______',
+  '______PPPPPP______',
+  '_____PPPPPPPP_____',
+  '____PPPPPPPPPP____',
+  '___WWPPPPPPPPWW___',
+  '___WWPPPPPPPPWW___',
+  '___WWPPPPPPPPWW___',
+  '____WPPPPPPPPW____',
+  'G____PPPPPPPP____G',
+  'GG___BBBBBBBB___GG',
+  '_GG__BB____BB__GG_',
+  '__GG_BB____BB_GG__',
+  '___GGBB____BBGG___',
+  '____GBB____BBG____',
+  '_____BB____BB_____',
+  '_____BB____BB_____',
+  '____BBB____BBB____',
 ]);
 
 // ======= LODGE / BUILDING (at bottom of slope) =======
@@ -330,7 +325,7 @@ export const JAMMER: SpriteData = parseSprite([
   '_BB_BB_',
 ]);
 
-// ======= RENDERING FUNCTION =======
+// ======= RENDERING FUNCTIONS =======
 
 export function drawSprite(
   ctx: CanvasRenderingContext2D,
@@ -349,4 +344,137 @@ export function drawSprite(
       ctx.fillRect(Math.floor(x + drawCol), Math.floor(y + row), 1, 1);
     }
   }
+}
+
+/**
+ * Draw the large skier head with goggles for the main menu screen.
+ * Matches the original Apple IIe close-up of the skier's face.
+ */
+export function drawMenuSkierHead(
+  ctx: CanvasRenderingContext2D,
+  cx: number,
+  cy: number,
+): void {
+  // Purple stocking cap
+  ctx.fillStyle = COLORS.PURPLE;
+  // Cap top (pointed)
+  ctx.fillRect(cx - 2, cy - 52, 4, 4);
+  ctx.fillRect(cx - 4, cy - 48, 8, 4);
+  ctx.fillRect(cx - 8, cy - 44, 16, 4);
+  ctx.fillRect(cx - 14, cy - 40, 28, 4);
+  ctx.fillRect(cx - 20, cy - 36, 40, 4);
+  ctx.fillRect(cx - 26, cy - 32, 52, 6);
+  ctx.fillRect(cx - 30, cy - 26, 60, 6);
+
+  // Pompom on top
+  ctx.fillStyle = COLORS.WHITE;
+  ctx.fillRect(cx - 4, cy - 56, 8, 6);
+
+  // Face area (orange skin)
+  ctx.fillStyle = COLORS.ORANGE;
+  ctx.fillRect(cx - 30, cy - 20, 60, 40);
+
+  // Goggles - white frame
+  ctx.fillStyle = COLORS.WHITE;
+  // Left goggle frame
+  ctx.fillRect(cx - 28, cy - 16, 24, 20);
+  // Right goggle frame
+  ctx.fillRect(cx + 4, cy - 16, 24, 20);
+  // Bridge between goggles
+  ctx.fillRect(cx - 4, cy - 10, 8, 8);
+
+  // Goggle lenses (blue)
+  ctx.fillStyle = COLORS.BLUE;
+  ctx.fillRect(cx - 24, cy - 12, 16, 12);
+  ctx.fillRect(cx + 8, cy - 12, 16, 12);
+
+  // Goggle shine highlights
+  ctx.fillStyle = COLORS.WHITE;
+  ctx.fillRect(cx - 22, cy - 10, 4, 4);
+  ctx.fillRect(cx + 10, cy - 10, 4, 4);
+
+  // Mouth/chin area
+  ctx.fillStyle = COLORS.ORANGE;
+  ctx.fillRect(cx - 26, cy + 4, 52, 8);
+
+  // Purple scarf
+  ctx.fillStyle = COLORS.PURPLE;
+  ctx.fillRect(cx - 30, cy + 12, 60, 16);
+  ctx.fillRect(cx - 26, cy + 28, 52, 8);
+  // Scarf tails
+  ctx.fillRect(cx + 20, cy + 20, 14, 20);
+  ctx.fillRect(cx + 24, cy + 36, 10, 8);
+}
+
+/**
+ * Draw cross-hatched terrain matching the original Apple IIe look.
+ * Orange base with diagonal line pattern.
+ */
+export function drawTerrain(
+  ctx: CanvasRenderingContext2D,
+  x: number,
+  y: number,
+  w: number,
+  h: number,
+): void {
+  // Orange base
+  ctx.fillStyle = COLORS.ORANGE;
+  ctx.fillRect(x, y, w, h);
+
+  // Cross-hatch pattern with darker lines
+  ctx.strokeStyle = '#A04000';
+  ctx.lineWidth = 1;
+  const spacing = 6;
+
+  ctx.beginPath();
+  // Diagonal lines (top-left to bottom-right)
+  for (let i = -h; i < w + h; i += spacing) {
+    ctx.moveTo(x + i, y);
+    ctx.lineTo(x + i + h, y + h);
+  }
+  // Diagonal lines (top-right to bottom-left)
+  for (let i = -h; i < w + h; i += spacing) {
+    ctx.moveTo(x + i + h, y);
+    ctx.lineTo(x + i, y + h);
+  }
+  ctx.stroke();
+}
+
+/**
+ * Draw mountain silhouettes for menu/select screens.
+ */
+export function drawMountains(
+  ctx: CanvasRenderingContext2D,
+  baseY: number,
+  w: number,
+): void {
+  // Back range (white/snow)
+  ctx.fillStyle = COLORS.WHITE;
+  ctx.beginPath();
+  ctx.moveTo(0, baseY);
+  ctx.lineTo(30, baseY - 35);
+  ctx.lineTo(60, baseY - 20);
+  ctx.lineTo(100, baseY - 50);
+  ctx.lineTo(130, baseY - 30);
+  ctx.lineTo(170, baseY - 55);
+  ctx.lineTo(200, baseY - 25);
+  ctx.lineTo(240, baseY - 40);
+  ctx.lineTo(w, baseY - 15);
+  ctx.lineTo(w, baseY);
+  ctx.closePath();
+  ctx.fill();
+
+  // Front range (purple)
+  ctx.fillStyle = COLORS.PURPLE;
+  ctx.beginPath();
+  ctx.moveTo(0, baseY);
+  ctx.lineTo(40, baseY - 25);
+  ctx.lineTo(80, baseY - 10);
+  ctx.lineTo(140, baseY - 35);
+  ctx.lineTo(180, baseY - 15);
+  ctx.lineTo(220, baseY - 30);
+  ctx.lineTo(w, baseY - 8);
+  ctx.lineTo(w, baseY);
+  ctx.closePath();
+  ctx.fill();
 }

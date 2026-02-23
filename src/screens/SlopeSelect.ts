@@ -3,6 +3,7 @@ import { InputState } from '../input/InputManager';
 import { AudioManager } from '../audio/AudioManager';
 import { SlopeDef } from '../game/SlopeData';
 import { SaveData } from '../data/Storage';
+import { drawTerrain, drawMountains, drawSprite, SKIER_STANDING } from '../rendering/Sprites';
 
 export class SlopeSelect {
   private selectedIndex = 0;
@@ -50,20 +51,35 @@ export class SlopeSelect {
   }
 
   render(ctx: CanvasRenderingContext2D): void {
-    // Blue background matching original Apple IIe menu
+    // Blue sky background
     ctx.fillStyle = COLORS.BLUE;
     ctx.fillRect(0, 0, GAME_WIDTH, GAME_HEIGHT);
 
-    // Title
+    // "Ski Crazed" banner at top
     ctx.fillStyle = COLORS.WHITE;
+    ctx.fillRect(0, 0, GAME_WIDTH, 16);
+    ctx.fillStyle = COLORS.BLUE;
     ctx.font = '8px monospace';
     ctx.textAlign = 'center';
-    ctx.fillText('SELECT SLOPE', GAME_WIDTH / 2, 14);
+    ctx.fillText('Ski Crazed', GAME_WIDTH / 2, 12);
+
+    // Mountain silhouettes
+    drawMountains(ctx, 80, GAME_WIDTH);
+
+    // Orange cross-hatched terrain at bottom
+    drawTerrain(ctx, 0, 80, GAME_WIDTH, GAME_HEIGHT - 80);
+
+    // Small skier on the terrain
+    drawSprite(ctx, SKIER_STANDING, 40, 72);
+
+    // Slope info panel (dark overlay)
+    ctx.fillStyle = 'rgba(0, 0, 0, 0.7)';
+    ctx.fillRect(10, 90, GAME_WIDTH - 20, GAME_HEIGHT - 100);
 
     // Slope list
-    const startY = 28;
-    const lineHeight = 14;
-    const maxVisible = 10;
+    const startY = 104;
+    const lineHeight = 12;
+    const maxVisible = 7;
 
     for (let i = 0; i < Math.min(maxVisible, this.slopes.length - this.scrollOffset); i++) {
       const idx = this.scrollOffset + i;
@@ -74,31 +90,31 @@ export class SlopeSelect {
 
       if (selected) {
         ctx.fillStyle = COLORS.WHITE;
-        ctx.fillRect(8, y - 7, GAME_WIDTH - 16, 12);
+        ctx.fillRect(14, y - 7, GAME_WIDTH - 28, 11);
       }
 
       // Slope number and name
-      ctx.fillStyle = selected ? COLORS.BLUE : (unlocked ? COLORS.WHITE : COLORS.BLACK);
+      ctx.fillStyle = selected ? COLORS.BLACK : (unlocked ? COLORS.GREEN : COLORS.PURPLE);
       ctx.font = '6px monospace';
       ctx.textAlign = 'left';
       const typeTag = slope.type === 'slalom' ? ' [SL]' : '';
       ctx.fillText(
         unlocked ? `${slope.number}. ${slope.name}${typeTag}` : `${slope.number}. ???`,
-        14, y
+        20, y
       );
 
       // Performance bar for completed slopes
       if (unlocked && this.saveData.bestPerformance[idx] !== undefined) {
         const perf = this.saveData.bestPerformance[idx];
-        const barW = 40;
-        const barX = GAME_WIDTH - 56;
-        ctx.fillStyle = COLORS.BLACK;
+        const barW = 36;
+        const barX = GAME_WIDTH - 60;
+        ctx.fillStyle = selected ? COLORS.PURPLE : COLORS.BLACK;
         ctx.fillRect(barX, y - 5, barW, 6);
         ctx.fillStyle = perf >= 70 ? COLORS.GREEN : (perf >= 40 ? COLORS.ORANGE : COLORS.WHITE);
         ctx.fillRect(barX, y - 5, Math.floor(barW * perf / 100), 6);
-        ctx.fillStyle = selected ? COLORS.BLUE : COLORS.WHITE;
+        ctx.fillStyle = selected ? COLORS.BLACK : COLORS.WHITE;
         ctx.textAlign = 'right';
-        ctx.fillText(`${Math.floor(perf)}%`, GAME_WIDTH - 12, y);
+        ctx.fillText(`${Math.floor(perf)}%`, GAME_WIDTH - 18, y);
       }
     }
 
@@ -106,18 +122,18 @@ export class SlopeSelect {
     if (this.scrollOffset > 0) {
       ctx.fillStyle = COLORS.WHITE;
       ctx.textAlign = 'center';
-      ctx.fillText('▲', GAME_WIDTH / 2, startY - 6);
+      ctx.fillText('\u25B2', GAME_WIDTH / 2, startY - 8);
     }
     if (this.scrollOffset + maxVisible < this.slopes.length) {
       ctx.fillStyle = COLORS.WHITE;
       ctx.textAlign = 'center';
-      ctx.fillText('▼', GAME_WIDTH / 2, startY + maxVisible * lineHeight + 4);
+      ctx.fillText('\u25BC', GAME_WIDTH / 2, startY + maxVisible * lineHeight + 2);
     }
 
     // Footer
-    ctx.fillStyle = COLORS.BLUE;
+    ctx.fillStyle = COLORS.WHITE;
     ctx.font = '5px monospace';
     ctx.textAlign = 'center';
-    ctx.fillText('ENTER/TAP TO SKI  -  ESC/BACK TO MENU', GAME_WIDTH / 2, GAME_HEIGHT - 8);
+    ctx.fillText('ENTER/TAP TO SKI  -  ESC/BACK TO MENU', GAME_WIDTH / 2, GAME_HEIGHT - 4);
   }
 }
