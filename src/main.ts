@@ -1,5 +1,12 @@
 import { Game } from './game/Game';
 
+// Force reload when a new service worker takes over
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.addEventListener('controllerchange', () => {
+    window.location.reload();
+  });
+}
+
 // Wait for DOM
 document.addEventListener('DOMContentLoaded', () => {
   const canvas = document.getElementById('game') as HTMLCanvasElement;

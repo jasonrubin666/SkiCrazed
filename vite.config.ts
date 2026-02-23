@@ -32,8 +32,11 @@ export default defineConfig({
       },
       workbox: {
         globPatterns: ['**/*.{js,css,html,png,svg,woff2}'],
+        // skipWaiting + clientsClaim = new SW takes over immediately
+        skipWaiting: true,
+        clientsClaim: true,
         // Version bump forces SW update and cache bust on clients
-        additionalManifestEntries: [{ url: 'version', revision: '1.4.0' }],
+        additionalManifestEntries: [{ url: 'version', revision: '1.5.0' }],
       },
     }),
   ],
