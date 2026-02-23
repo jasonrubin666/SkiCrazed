@@ -155,6 +155,31 @@ export function drawChar(
   return CHAR_W;
 }
 
+/** Draw text at pixel position with a scale multiplier. */
+export function drawTextScaled(
+  ctx: CanvasRenderingContext2D,
+  text: string,
+  x: number,
+  y: number,
+  color: string,
+  scale: number,
+): void {
+  ctx.fillStyle = color;
+  for (let i = 0; i < text.length; i++) {
+    const data = getCharData(text[i]);
+    const cx = Math.floor(x) + i * CHAR_W * scale;
+    for (let row = 0; row < CHAR_H; row++) {
+      const bits = data[row];
+      if (bits === 0) continue;
+      for (let col = 0; col < CHAR_W; col++) {
+        if ((bits >> (6 - col)) & 1) {
+          ctx.fillRect(cx + col * scale, Math.floor(y) + row * scale, scale, scale);
+        }
+      }
+    }
+  }
+}
+
 /**
  * Convert a text-mode row/column to pixel coordinates.
  * Apple IIe: 40 columns × 24 rows.
