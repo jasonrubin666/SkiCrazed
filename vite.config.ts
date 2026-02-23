@@ -33,7 +33,7 @@ export default defineConfig({
       workbox: {
         globPatterns: ['**/*.{js,css,html,png,svg,woff2}'],
         // Version bump forces SW update and cache bust on clients
-        additionalManifestEntries: [{ url: 'version', revision: '1.2.0' }],
+        additionalManifestEntries: [{ url: 'version', revision: '1.3.0' }],
       },
     }),
   ],
