@@ -254,6 +254,67 @@ export const TREE: SpriteData[] = [
   ]),
 ];
 
+// ======= LARGE TITLE SKIER (for title splash screen) =======
+
+export const TITLE_SKIER: SpriteData = parseSprite([
+  '____________WWWW____________',
+  '___________WWWWWW___________',
+  '___________WWWWWW___________',
+  '__________WWPPPPWW__________',
+  '__________WWPPPPWW__________',
+  '___________WWWWWW___________',
+  '____________WWWW____________',
+  '___________PPPPPP___________',
+  '__________PPPPPPPP__________',
+  '_________PPPPPPPPPP_________',
+  '________WWPPPPPPPPWW________',
+  '________WWPPPPPPPPWW________',
+  '________WWPPPPPPPPWW________',
+  '_______WWWPPPPPPPPWWW_______',
+  '_______WW_PPPPPPPP_WW_______',
+  '__________PPPPPPPP__________',
+  '__________PPPPPPPP__________',
+  '__________PPP__PPP__________',
+  '_________PPP____PPP_________',
+  '_________PP______PP_________',
+  '________PP________PP________',
+  '_______PP__________PP_______',
+  '______PP____________PP______',
+  '_____PP______________PP_____',
+  '____BB________________BB____',
+  '___BBB________________BBB___',
+  '__BBB__________________BBB__',
+  '_BBB____________________BBB_',
+]);
+
+// ======= LODGE / BUILDING (at bottom of slope) =======
+
+export const LODGE: SpriteData = parseSprite([
+  '____________OO____________',
+  '___________OOOO___________',
+  '__________OOOOOO__________',
+  '_________OOOOOOOO_________',
+  '________OOOOOOOOOO________',
+  '_______OOOOOOOOOOOO_______',
+  '______OOOOOOOOOOOOOO______',
+  '_____OOOOOOOOOOOOOOOO_____',
+  '____OOOOOOOOOOOOOOOOOO____',
+  '___OOOOOOOOOOOOOOOOOOOO___',
+  '__OOOOOOOOOOOOOOOOOOOOOO__',
+  '_OOOOOOOOOOOOOOOOOOOOOOOO_',
+  'OOOOOOOOOOOOOOOOOOOOOOOOOO',
+  'OOPPPPPPPPPPPPPPPPPPPPPPOO',
+  'OOPPPPPPPPPPPPPPPPPPPPPPOO',
+  'OOPPPWWWPPPPPPPPPWWWPPPPOO',
+  'OOPPPWBWPPPPPPPPPWBWPPPPOO',
+  'OOPPPWBWPPPPPPPPPWBWPPPPOO',
+  'OOPPPWWWPPPPPPPPPWWWPPPPOO',
+  'OOPPPPPPPPPWWWWPPPPPPPPOO_',
+  'OOPPPPPPPPPWBBWPPPPPPPPOO_',
+  'OOPPPPPPPPPWBBWPPPPPPPPOO_',
+  'OOPPPPPPPPPWBBWPPPPPPPPOO_',
+]);
+
 // ======= JAMMER (tutorial instructor) =======
 
 export const JAMMER: SpriteData = parseSprite([
